@@ -7,3 +7,5 @@ CREATE TABLE Man
 );
 
 insert into Man(Id,Nom,Prenom) values(1,'amadou','ousmane');
+insert into Man(Id,Nom,Prenom) values(2,'aly','yaya');
+
