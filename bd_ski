@@ -1,0 +1,9 @@
+CREATE TABLE Man
+(
+    Id INT NOT NULL PRIMARY KEY, -- primary key column
+    Nom VARCHAR(50) NOT NULL,
+    Prenom VARCHAR(50) NOT NULL
+    -- specify more columns here
+);
+
+insert into Man(Id,Nom,Prenom) values(1,'amadou','ousmane');
