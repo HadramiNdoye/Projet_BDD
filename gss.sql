@@ -5,4 +5,3 @@ alter table type_forfait add constraint PK primary key (id_type_forfait);
 
 select id_carte into carte from bd_station ;
 
-blablabla 
