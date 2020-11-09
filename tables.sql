@@ -3,7 +3,7 @@ drop table forfait ;
 drop table type_forfait;
 drop table remontee cascade ;
 drop table type_remontee cascade ;
-drop table passage ;
+drop table passage;
 
 CREATE TABLE type_forfait
 (

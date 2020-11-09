@@ -44,6 +44,7 @@ new_heure_debut time without time zone;
 new_heure_fin time without time zone;
 new_libelle_type_forfait character varying(30);
 new_duree_forfait integer;
+nb_remontee integer;
 
 begin
 -- on recupere heure_debut
@@ -57,6 +58,10 @@ new_libelle_type_forfait = (select t.libelle_type_forfait from type_forfait t,fo
 
 -- on recupere la duree du forfait
 new_duree_forfait = (select t.duree_forfait from type_forfait t,forfait f where new.id_carte=f.id_carte and f.id_type_forfait=t.id_type_forfait);
+
+-- On recupere le nombre de remontee
+--nb_remontee = (select count(f.id_forfait) from forfait f where f.id_carte=new.id_carte);
+
 
 if(new_libelle_type_forfait='matinée') then
 
@@ -90,10 +95,14 @@ create trigger forfait_invalide before insert
 	execute procedure forfait_invalide();
 	
 -- Requetes pour tester les trigger
+--triggers 1 et 2
 
 insert into forfait values(25001,2,5934); -- insertion d'un nouveau forfait dont la date debut est null
 insert into forfait values(25002,2,5934) ;
 
-insert into type_forfait values(25,'semaine',20,'9:00:00','17:00:00',8);
+--triggers 3 et 4
+insert into type_forfait values(25,'matinée',20,'10:00:00',':13:00:00',1);
+insert into carte values(7001);
 insert into forfait values(25003,25,7001,'20-12-2020');
 insert into passage values(7001,2,'2008-12-27 11:21:43.28');
+
