@@ -36,7 +36,10 @@ group by id_carte having count(*)>=all(select count(*) as Nb_forfait from forfai
 group by id_carte);
 
 --8 
-
 select count(*) from passage;
+--select r.nom_remontee, count(*) as Nb_Passage from remontee r, passage p group by r.nom_remontee;
 
 --9
+
+
+
