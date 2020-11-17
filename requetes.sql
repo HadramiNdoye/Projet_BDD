@@ -31,6 +31,10 @@ from forfait f,passage p where p.id_carte=f.id_carte;
 
 --7 
 
+select id_carte, count(*) as Nb_forfait from forfait 
+group by id_carte having count(*)>=all(select count(*) as Nb_forfait from forfait
+group by id_carte);
+
 --8 
 
 select count(*) from passage;
