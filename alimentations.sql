@@ -9,4 +9,4 @@ insert into type_remontee (select distinct id_type_remontee,libelle_type_remonte
 
 insert into remontee (select distinct id_remontee,nom_remontee,duree_remontee,id_type_remontee from bd_station);
 
-insert into passage (select distinct id_carte, id_remontee, heure_passage  from bd_station);
+insert into passage (select distinct id_carte,id_remontee,heure_passage from bd_station);

@@ -36,3 +36,7 @@ from forfait f,passage p where p.id_carte=f.id_carte;
 select count(*) from passage;
 
 --9
+
+--13 
+
+select sum(t.prix) from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
