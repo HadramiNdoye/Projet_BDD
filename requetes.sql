@@ -31,12 +31,23 @@ from forfait f,passage p where p.id_carte=f.id_carte;
 
 --7 
 
+select id_carte, count(*) as Nb_forfait from forfait 
+group by id_carte having count(*)>=all(select count(*) as Nb_forfait from forfait
+group by id_carte);
+
 --8 
-
 select count(*) from passage;
+--select r.nom_remontee, count(*) as Nb_Passage from remontee r, passage p group by r.nom_remontee;
 
+--9
+
+
+
+<<<<<<< HEAD
 --9
 
 --13 
 
 select sum(t.prix) from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
+=======
+>>>>>>> b6d33a8fc583a53ef8c0ac98d7aaea6df4e11276
