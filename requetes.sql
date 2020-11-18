@@ -55,6 +55,17 @@ where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee having c
 where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
 
 
+-- 12
+select id_type_forfait, libelle_type_forfait from type_forfait;
+
+select f.id_forfait, t.libelle_type_forfait, count(*) as Nb_fois_utilise 
+from forfait f, type_forfait t, passage p 
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+group by f.id_forfait, t.libelle_type_forfait having count(*)>=all(select count(*) as Nb_fois_utilise 
+from forfait f, type_forfait t, passage p 
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+group by f.id_forfait, t.libelle_type_forfait);
+
 --13 
 
 select sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
