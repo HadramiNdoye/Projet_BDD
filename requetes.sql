@@ -69,13 +69,8 @@ group by f.id_forfait, t.libelle_type_forfait);
 select sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
 
 
-<<<<<<< HEAD
---14
-select date_trunc('month', f.date_debut) as Mois, sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f 
-=======
---14 ok
+--14 
 select date_trunc('month', f.date_debut), sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f 
->>>>>>> 386189808c430f84ac34410f2b2ff0ea95a7e50d
 where t.id_type_forfait=f.id_type_forfait
 group by date_trunc('month', f.date_debut) order by date_trunc('month', f.date_debut) asc;
 
