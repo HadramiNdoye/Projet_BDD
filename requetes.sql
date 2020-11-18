@@ -37,9 +37,9 @@ group by id_carte);
 
 --8 
 select count(*) from passage;
---select r.nom_remontee, count(*) as Nb_Passage from remontee r, passage p group by r.nom_remontee;
 
---9
+select p.id_remontee, r.nom_remontee, count(*) as Nb_Passage from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee order by p.id_remontee asc;
 
 
 
@@ -55,3 +55,41 @@ select t.id_type_remontee,t.libelle_type_remontee from remontee r, type_remontee
 --13 
 
 select sum(t.prix) from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
+--9
+
+
+-- 10
+select p.id_remontee,r.nom_remontee, count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee having count(*)>=all(select count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
+
+
+-- 11
+select p.id_remontee,r.nom_remontee, count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee having count(*)<=all(select count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
+
+
+-- 12
+-- cette requetes intermediare nous permet de reperer les id_type_forfait correspondants 
+-- aux forfaits ayants seervis sur une seule journée
+select id_type_forfait, libelle_type_forfait from type_forfait;
+-- la requete principale
+select f.id_forfait, t.libelle_type_forfait, count(*) as Nb_fois_utilise 
+from forfait f, type_forfait t, passage p 
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+group by f.id_forfait, t.libelle_type_forfait having count(*)>=all(select count(*) as Nb_fois_utilise 
+from forfait f, type_forfait t, passage p 
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+group by f.id_forfait, t.libelle_type_forfait);
+
+--13 
+
+select sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
+
+
+--14
+select date_trunc('month', f.date_debut), sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f 
+where t.id_type_forfait=f.id_type_forfait
+group by date_trunc('month', f.date_debut) order by date_trunc('month', f.date_debut) asc;
+
