@@ -43,11 +43,15 @@ select count(*) from passage;
 
 
 
-<<<<<<< HEAD
+
 --9
+
+-- 10
+select r.id_remontee,r.nom_remontee from remontee r where r.id_remontee >= all(select p.id_remontee from passage p);
+
+-- 11
+select t.id_type_remontee,t.libelle_type_remontee from remontee r, type_remontee t where t.id_type_remontee = r.id_type_remontee and t.libelle_type_remontee = 'télésiège'  and r.id_remontee < all(select p.id_remontee from passage p);
 
 --13 
 
 select sum(t.prix) from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
-=======
->>>>>>> b6d33a8fc583a53ef8c0ac98d7aaea6df4e11276
