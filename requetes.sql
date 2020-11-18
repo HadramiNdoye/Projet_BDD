@@ -37,13 +37,10 @@ group by id_carte);
 
 --8 
 select count(*) from passage;
---select p.id_remontee, r.nom_remontee, count(*) as Nb_Passage from passage p, remontee r 
---where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee;
-SELECT R.nom_remontee, R.id_remontee, COUNT(*)
-    FROM type_remontee Tr, remontee R, passage P
-    WHERE Tr.id_type_remontee = R.id_type_remontee
-    AND R.id_remontee= P.id_remontee
-    GROUP BY R.id_remontee;
+
+select p.id_remontee, r.nom_remontee, count(*) as Nb_Passage from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee order by p.id_remontee asc;
+
 
 
 --9
