@@ -11,8 +11,11 @@ select r.nom_remontee from remontee r,type_remontee tr where tr.id_type_remontee
 --select distinct r.id_remontee,r.nom_remontee from remontee r,type_remontee tr,passage p,forfait f where 
 --tr.id_type_remontee=r.id_type_remontee and p.id_remontee=r.id_remontee and p.id_carte=f.id_carte and tr.libelle_type_remontee='télésiège' 
 --and f.id_forfait=1;
-select distinct r.id_remontee, r.nom_remontee, t.libelle_type_remontee from remontee r, type_remontee t, passage p, forfait f
-where r.id_type_remontee=t.id_type_remontee and p.id_carte=f.id_carte and r.id_remontee=p.id_remontee and t.libelle_type_remontee='télésiège' and f.id_forfait=1; 
+select distinct r.id_remontee, r.nom_remontee, t.libelle_type_remontee 
+from remontee r, type_remontee t, passage p, forfait f
+where r.id_type_remontee=t.id_type_remontee 
+and p.id_carte=f.id_carte and r.id_remontee=p.id_remontee 
+and t.libelle_type_remontee='télésiège' and f.id_forfait=1; 
 
 --4. Quelles sont les noms des remontées non empruntées avec le forfait n°2
 select nom_remontee from remontee
@@ -44,6 +47,11 @@ where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee order b
 
 
 --9
+select date_trunc('day', f.date_debut) as Jour, count(*) as Nb_passage from passage p, forfait f, remontee r
+where p.id_carte=f.id_carte and p.id_remontee=r.id_remontee
+group by date_trunc('day', f.date_debut) order by date_trunc('day', f.date_debut) asc;
+
+
 
 -- 10
 select p.id_remontee,r.nom_remontee, count(*) as Nb_remontee from passage p, remontee r 
