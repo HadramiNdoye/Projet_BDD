@@ -49,6 +49,12 @@ where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee having c
 where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
 
 
+-- 11
+select p.id_remontee,r.nom_remontee, count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee having count(*)<=all(select count(*) as Nb_remontee from passage p, remontee r 
+where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
+
+
 --13 
 
 select sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
