@@ -47,9 +47,9 @@ where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee order b
 
 
 --9
-select distinct r.id_remontee, date_trunc('day', f.date_debut) as Jour, count(*) as Nb_passage from passage p, forfait f, remontee r
+select distinct r.id_remontee, r.nom_remontee, date_trunc('day', f.date_debut) as Jour, count(*) as Nb_passage from passage p, forfait f, remontee r
 where p.id_carte=f.id_carte and p.id_remontee=r.id_remontee
-group by date_trunc('day', f.date_debut),r.id_remontee order by date_trunc('day', f.date_debut) asc;
+group by date_trunc('day', f.date_debut), r.id_remontee, nom_remontee order by date_trunc('day', f.date_debut) asc;
 
 
 
