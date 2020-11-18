@@ -1,3 +1,8 @@
+
+
+-- Créations des triggers 
+
+
 create or replace function carte_utilisee() returns trigger as $carte_util$
 declare
 
@@ -44,48 +49,48 @@ new_heure_debut time without time zone;
 new_heure_fin time without time zone;
 new_libelle_type_forfait character varying(30);
 new_duree_forfait integer;
-nb_remontee integer;
+new_date_debut date;
+new_id_forfait integer;
+nb_carte integer;
 
 begin
--- on recupere heure_debut
-new_heure_debut = (select t.heure_debut from type_forfait t,forfait f where new.id_carte=f.id_carte and f.id_type_forfait=t.id_type_forfait);
-
--- on recupere heure_fin
-new_heure_fin = (select t.heure_fin from type_forfait t,forfait f where new.id_carte=f.id_carte and f.id_type_forfait=t.id_type_forfait);
 
 -- on recupere libelle_type_forfait
 new_libelle_type_forfait = (select t.libelle_type_forfait from type_forfait t,forfait f where new.id_carte=f.id_carte and f.id_type_forfait=t.id_type_forfait);
 
 -- on recupere la duree du forfait
 new_duree_forfait = (select t.duree_forfait from type_forfait t,forfait f where new.id_carte=f.id_carte and f.id_type_forfait=t.id_type_forfait);
+new_date_debut = (select f.date_debut from forfait f where f.id_carte=new.id_carte);
 
--- On recupere le nombre de remontee
---nb_remontee = (select count(f.id_forfait) from forfait f where f.id_carte=new.id_carte);
+-- On recupere l'ID du nouvel forfait
+new_id_forfait = (select f.id_forfait from forfait f where f.id_carte = new.id_carte);
 
+-- requete qui compte le nombre de carte utilisant le meme forfait
+nb_carte = (select count(p.id_carte) from passage p,forfait f where (new.heure_passage,new.heure_passage) 
+overlaps(p.heure_passage,p.heure_passage) and p.id_carte=new.id_carte and f.id_forfait = new_id_forfait);
 
 if(new_libelle_type_forfait='matinée') then
 
-	if(select(time without time zone '09:00:00',time without time zone '14:00:00') overlaps (new_heure_debut,new_heure_fin) = false or
-	 new_duree_forfait > 1) then
+	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '14:00:00' + interval '1 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
+	 new_duree_forfait > 1 or nb_carte > 0) then
 			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
 	end if;
 end if;
 if(new_libelle_type_forfait='semaine') then
 
-	if(select(time without time zone '09:00:00',time without time zone '17:00:00') overlaps (new_heure_debut,new_heure_fin) = false or 
-		new_duree_forfait > 7) then
+	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '17:00:00' + interval '7 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
+	 new_duree_forfait > 7 or nb_carte > 0) then
 			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
 	end if;
 end if;
 if(new_libelle_type_forfait='journée') then
 
-	if(select(time without time zone '09:00:00',time without time zone '17:00:00') overlaps (new_heure_debut,new_heure_fin) = false or 
-		new_duree_forfait > 1) then
+	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '17:00:00' + interval '1 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
+	 new_duree_forfait > 1 or nb_carte > 0) then
 			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
 	end if;
 end if;
-
-return new;					
+return new;
 end
 
 $forfait_inv$ language plpgsql;
@@ -103,6 +108,25 @@ insert into forfait values(25002,2,5934) ;
 --triggers 3 et 4
 insert into type_forfait values(25,'matinée',20,'10:00:00',':13:00:00',1);
 insert into carte values(7001);
-insert into forfait values(25003,25,7001,'20-12-2020');
-insert into passage values(7001,2,'2008-12-27 11:21:43.28');
+insert into forfait values(25003,25,7001,'17-11-2020');
+insert into passage values(7001,2,'2020-11-17 11:21:43.28');
+insert into passage values(7001,2,'2020-11-27 11:21:43.28');
+insert into passage values(7001,2,'2020-11-17 11:21:43.28');
 
+insert into type_forfait values(26,'semaine',20,'10:00:00',':13:00:00',1);
+insert into carte values(7002);
+insert into forfait values(25004,26,7002,'17-11-2020');
+insert into passage values(7002,2,'2020-11-23 11:21:43.28');
+insert into passage values(7002,2,'2020-11-26 11:21:43.28');
+insert into passage values(7002,2,'2020-11-23 11:21:43.28');
+
+
+insert into type_forfait values(27,'journée',20,'10:00:00',':13:00:00',1);
+insert into carte values(7003);
+insert into forfait values(25005,27,7003,'17-11-2020');
+insert into passage values(7003,2,'2020-11-17 11:21:43.28');
+insert into passage values(7003,2,'2020-11-19 11:21:43.28');
+insert into passage values(7003,2,'2020-11-17 11:21:43.28');
+
+
+--FIN

@@ -169,6 +169,10 @@ f.id_forfait=2;
 select libelle_type_forfait,count(libelle_type_forfait) from type_forfait
 group by libelle_type_forfait;
 
+--6 Combien de forfaits ont été utilisés sur toutes les remontées de la station
+
+select count(f.id_forfait) 
+from forfait f,passage p where p.id_carte=f.id_carte;
 
 
 
