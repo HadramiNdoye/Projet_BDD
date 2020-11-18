@@ -59,16 +59,12 @@ where p.id_remontee=r.id_remontee group by p.id_remontee,r.nom_remontee);
 
 
 -- 12
--- cette requetes intermediare nous permet de reperer les id_type_forfait correspondants 
--- aux forfaits ayants seervis sur une seule journée
-select id_type_forfait, libelle_type_forfait from type_forfait;
--- la requete principale
 select f.id_forfait, t.libelle_type_forfait, count(*) as Nb_fois_utilise 
 from forfait f, type_forfait t, passage p 
-where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte
 group by f.id_forfait, t.libelle_type_forfait having count(*)>=all(select count(*) as Nb_fois_utilise 
 from forfait f, type_forfait t, passage p 
-where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte and t.id_type_forfait in (1,2,3,4,5,25)
+where f.id_type_forfait=t.id_type_forfait and f.id_carte=p.id_carte
 group by f.id_forfait, t.libelle_type_forfait);
 
 --13 
