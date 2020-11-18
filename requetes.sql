@@ -36,27 +36,12 @@ group by id_carte having count(*)>=all(select count(*) as Nb_forfait from forfai
 group by id_carte);
 
 --8 
-select count(*) from passage;
 
 select p.id_remontee, r.nom_remontee, count(*) as Nb_Passage from passage p, remontee r 
 where p.id_remontee=r.id_remontee group by p.id_remontee, r.nom_remontee order by p.id_remontee asc;
 
 
-
-
 --9
-
--- 10
-select r.id_remontee,r.nom_remontee from remontee r where r.id_remontee >= all(select p.id_remontee from passage p);
-
--- 11
-select t.id_type_remontee,t.libelle_type_remontee from remontee r, type_remontee t where t.id_type_remontee = r.id_type_remontee and t.libelle_type_remontee = 'télésiège'  and r.id_remontee < all(select p.id_remontee from passage p);
-
---13 
-
-select sum(t.prix) from type_forfait t, forfait f where t.id_type_forfait=f.id_type_forfait;
---9
-
 
 -- 10
 select p.id_remontee,r.nom_remontee, count(*) as Nb_remontee from passage p, remontee r 
@@ -85,7 +70,7 @@ select sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f where t.id_
 
 
 --14
-select date_trunc('month', f.date_debut), sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f 
+select date_trunc('month', f.date_debut) as Mois, sum(t.prix) as Chiffre_affaire from type_forfait t, forfait f 
 where t.id_type_forfait=f.id_type_forfait
 group by date_trunc('month', f.date_debut) order by date_trunc('month', f.date_debut) asc;
 
