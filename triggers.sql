@@ -73,21 +73,21 @@ if(new_libelle_type_forfait='matinée') then
 
 	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '14:00:00' + interval '1 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
 	 new_duree_forfait > 1 or nb_carte > 0) then
-			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
+			raise exception 'le forfait % de la carte % n''est pas valide!!!',new_id_forfait,new.id_carte;
 	end if;
 end if;
 if(new_libelle_type_forfait='semaine') then
 
 	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '17:00:00' + interval '7 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
 	 new_duree_forfait > 7 or nb_carte > 0) then
-			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
+			raise exception 'le forfait % de la carte % n''est pas valide!!!',new_id_forfait,new.id_carte;
 	end if;
 end if;
 if(new_libelle_type_forfait='journée') then
 
 	if(select(new_date_debut + interval '09:00:00',new_date_debut + interval '17:00:00' + interval '1 day') overlaps (new.heure_passage,new.heure_passage + interval '14:00:00') = false or
 	 new_duree_forfait > 1 or nb_carte > 0) then
-			raise exception 'le forfait de la carte % n''est pas valide!!!',new.id_carte;
+			raise exception 'le forfait % de la carte % n''est pas valide!!!',new_id_forfait,new.id_carte;
 	end if;
 end if;
 return new;
@@ -108,14 +108,14 @@ insert into forfait values(25002,2,5934) ;
 --triggers 3 et 4
 insert into type_forfait values(25,'matinée',20,'10:00:00',':13:00:00',1);
 insert into carte values(7001);
-insert into forfait values(25003,25,7001,'17-11-2020');
+insert into forfait values(25003,25,7001,'2020-11-17');
 insert into passage values(7001,2,'2020-11-17 11:21:43.28');
 insert into passage values(7001,2,'2020-11-27 11:21:43.28');
 insert into passage values(7001,2,'2020-11-17 11:21:43.28');
 
 insert into type_forfait values(26,'semaine',20,'10:00:00',':13:00:00',1);
 insert into carte values(7002);
-insert into forfait values(25004,26,7002,'17-11-2020');
+insert into forfait values(25004,26,7002,'2020-11-17');
 insert into passage values(7002,2,'2020-11-23 11:21:43.28');
 insert into passage values(7002,2,'2020-11-26 11:21:43.28');
 insert into passage values(7002,2,'2020-11-23 11:21:43.28');
@@ -123,7 +123,7 @@ insert into passage values(7002,2,'2020-11-23 11:21:43.28');
 
 insert into type_forfait values(27,'journée',20,'10:00:00',':13:00:00',1);
 insert into carte values(7003);
-insert into forfait values(25005,27,7003,'17-11-2020');
+insert into forfait values(25005,27,7003,'2020-11-17');
 insert into passage values(7003,2,'2020-11-17 11:21:43.28');
 insert into passage values(7003,2,'2020-11-19 11:21:43.28');
 insert into passage values(7003,2,'2020-11-17 11:21:43.28');
