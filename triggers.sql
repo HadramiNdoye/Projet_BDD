@@ -99,34 +99,7 @@ create trigger forfait_invalide before insert
 	on passage for each row 
 	execute procedure forfait_invalide();
 	
--- Requetes pour tester les trigger
---triggers 1 et 2
 
-insert into forfait values(25001,2,5934); -- insertion d'un nouveau forfait dont la date debut est null
-insert into forfait values(25002,2,5934) ;
-
---triggers 3 et 4
-insert into type_forfait values(25,'matinée',20,'10:00:00',':13:00:00',1);
-insert into carte values(7001);
-insert into forfait values(25003,25,7001,'2020-11-17');
-insert into passage values(7001,2,'2020-11-17 11:21:43.28');
-insert into passage values(7001,2,'2020-11-27 11:21:43.28');
-insert into passage values(7001,2,'2020-11-17 11:21:43.28');
-
-insert into type_forfait values(26,'semaine',20,'10:00:00',':13:00:00',1);
-insert into carte values(7002);
-insert into forfait values(25004,26,7002,'2020-11-17');
-insert into passage values(7002,2,'2020-11-23 11:21:43.28');
-insert into passage values(7002,2,'2020-11-26 11:21:43.28');
-insert into passage values(7002,2,'2020-11-23 11:21:43.28');
-
-
-insert into type_forfait values(27,'journée',20,'10:00:00',':13:00:00',1);
-insert into carte values(7003);
-insert into forfait values(25005,27,7003,'2020-11-17');
-insert into passage values(7003,2,'2020-11-17 11:21:43.28');
-insert into passage values(7003,2,'2020-11-19 11:21:43.28');
-insert into passage values(7003,2,'2020-11-17 11:21:43.28');
 
 
 --FIN
