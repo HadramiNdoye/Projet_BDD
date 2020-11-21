@@ -38,11 +38,13 @@ WHERE r.id_type_remontee = t.id_type_remontee
 SELECT nom_remontee 
 FROM remontee
 EXCEPT
-	SELECT DISTINCT r.nom_remontee 
-	FROM remontee r, passage p, forfait f 
-	WHERE p.id_remontee = r.id_remontee 
-		AND p.id_carte = f.id_carte 
-		AND f.id_forfait = 2;
+    SELECT DISTINCT r.nom_remontee 
+    FROM remontee r, passage p, forfait f,type_forfait tf
+    WHERE p.id_remontee = r.id_remontee 
+        AND p.id_carte = f.id_carte 
+        AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
+		AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin
+        AND f.id_forfait = 2;
 
 
 
@@ -59,9 +61,12 @@ GROUP BY tf.libelle_type_forfait;
 -- 6 Le nombre de forfaits qui ont été utilisés sur toutes les remontées de la station
 
 SELECT COUNT(*) AS Nb_forfaits_utilises 
-FROM forfait f, passage p, remontee r 
+FROM forfait f, passage p, remontee r, type_forfait tf 
 WHERE p.id_carte = f.id_carte
-	AND r.id_remontee = p.id_remontee;
+	AND r.id_remontee = p.id_remontee
+	AND tf.id_type_forfait = f.id_type_forfait
+	AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
+	AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin;
 
 
 
@@ -89,11 +94,14 @@ ORDER BY p.id_remontee ASC;
 --9. Pour, chaque jour, le nombre de passages enregistrés pour chaque remontée
 
 SELECT DISTINCT r.id_remontee, r.nom_remontee, DATE_TRUNC('day', f.date_debut) AS Jour, COUNT(*) AS Nb_passage 
-FROM passage p, forfait f, remontee r
+FROM passage p, forfait f, remontee r, type_forfait tf
 WHERE p.id_carte = f.id_carte 
 	AND p.id_remontee = r.id_remontee
-GROUP BY date_trunc('day', f.date_debut), r.id_remontee, nom_remontee 
-ORDER BY date_trunc('day', f.date_debut) ASC;
+	AND tf.id_type_forfait = f.id_type_forfait
+	AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
+	AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin
+GROUP BY DATE_TRUNC('day', f.date_debut), r.id_remontee, r.nom_remontee 
+ORDER BY DATE_TRUNC('day', f.date_debut) ASC;
 
 
 
@@ -133,13 +141,37 @@ SELECT f.id_forfait, t.libelle_type_forfait, COUNT(*) AS Nb_fois_utilise
 FROM forfait f, type_forfait t, passage p 
 WHERE f.id_type_forfait = t.id_type_forfait 
 	AND f.id_carte = p.id_carte
+	AND p.heure_passage BETWEEN f.date_debut + t.heure_debut 
+	AND f.date_debut + (t.duree_forfait-1) * interval '1 day' + t.heure_fin
 GROUP BY f.id_forfait, t.libelle_type_forfait 
 HAVING COUNT(*) >= ALL(SELECT COUNT(*) AS Nb_fois_utilise 
 					   FROM forfait f, type_forfait t, passage p 
 					   WHERE f.id_type_forfait = t.id_type_forfait 
 					  	   AND f.id_carte = p.id_carte
+						   AND p.heure_passage BETWEEN f.date_debut + t.heure_debut 
+						   AND f.date_debut + (t.duree_forfait-1) * interval '1 day' + t.heure_fin
 					   GROUP BY f.id_forfait, t.libelle_type_forfait);
 
+
+
+
+SELECT f.id_forfait, t.libelle_type_forfait, COUNT(*) as Nb_fois_utlilse
+FROM passage p, forfait f, type_forfait t
+WHERE p.id_carte = f.id_carte
+	AND f.id_type_forfait = t.id_type_forfait
+GROUP BY DATE_TRUNC('year', p.heure_passage),
+        DATE_TRUNC('month', p.heure_passage),
+        DATE_TRUNC('day', p.heure_passage),
+		f.id_forfait, t.libelle_type_forfait
+HAVING COUNT(*) = (SELECT MAX(Maxi) 
+            	   FROM (SELECT f.id_forfait, t.libelle_type_forfait, COUNT(*) as Maxi 
+                   FROM passage p, forfait f, type_forfait t
+                   WHERE p.id_carte = f.id_carte
+					   AND f.id_type_forfait = t.id_type_forfait
+                   GROUP BY DATE_TRUNC('year', p.heure_passage),
+                            DATE_TRUNC('month', p.heure_passage),
+                            DATE_TRUNC('day', p.heure_passage),
+                            f.id_forfait, t.libelle_type_forfait) skiier);
 
 
 
