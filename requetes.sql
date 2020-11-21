@@ -32,6 +32,7 @@ WHERE r.id_type_remontee = t.id_type_remontee
 
 
 
+
 -- 4. Les noms des remontées non empruntées avec le forfait n°2
 
 SELECT nom_remontee 
@@ -45,9 +46,10 @@ EXCEPT
 
 
 
+
 -- 5. Pour chaque type de forfait, le nombre de forfaits vendus
 
-SELECT tf.libelle_type_forfait, COUNT(f.id_forfait) 
+SELECT tf.libelle_type_forfait, COUNT(f.id_forfait) AS Nb_forfait_vendus
 FROM type_forfait tf, forfait f 
 WHERE tf.id_type_forfait = f.id_type_forfait
 GROUP BY tf.libelle_type_forfait;
@@ -56,9 +58,10 @@ GROUP BY tf.libelle_type_forfait;
 
 -- 6 Le nombre de forfaits qui ont été utilisés sur toutes les remontées de la station
 
-SELECT COUNT(f.id_forfait) 
-FROM forfait f, passage p 
-WHERE p.id_carte = f.id_carte;
+SELECT COUNT(*) AS Nb_forfaits_utilises 
+FROM forfait f, passage p, remontee r 
+WHERE p.id_carte = f.id_carte
+	AND r.id_remontee = p.id_remontee;
 
 
 
@@ -136,6 +139,7 @@ HAVING COUNT(*) >= ALL(SELECT COUNT(*) AS Nb_fois_utilise
 					   WHERE f.id_type_forfait = t.id_type_forfait 
 					  	   AND f.id_carte = p.id_carte
 					   GROUP BY f.id_forfait, t.libelle_type_forfait);
+
 
 
 
