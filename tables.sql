@@ -9,7 +9,7 @@ CREATE TABLE type_forfait
 (
     id_type_forfait integer NOT NULL,
     libelle_type_forfait character varying(30) NOT NULL,
-    prix numeric(3,0),
+    prix numeric(3,0) NOT NULL,
     heure_debut time without time zone,
     heure_fin time without time zone,
     duree_forfait integer,
@@ -39,18 +39,19 @@ CREATE TABLE public.forfait
 CREATE TABLE public.type_remontee
 (
     id_type_remontee integer NOT NULL,
-    libelle_type_remontee character varying(30) NOT NULL COLLATE pg_catalog."default",
+    libelle_type_remontee character varying(30) NOT NULL,
     CONSTRAINT pktr PRIMARY KEY (id_type_remontee)
 );
 
 CREATE TABLE public.remontee
 (
     id_remontee integer NOT NULL,
-    nom_remontee character varying COLLATE pg_catalog."default",
+    nom_remontee character varying(30) NOT NULL,
     duree_remontee interval,
     id_type_remontee integer,
     CONSTRAINT pkr PRIMARY KEY (id_remontee),
-    CONSTRAINT fkr FOREIGN KEY (id_type_remontee) REFERENCES public.type_remontee (id_type_remontee)
+    CONSTRAINT fkr FOREIGN KEY (id_type_remontee) REFERENCES public.type_remontee (id_type_remontee),
+    CONSTRAINT checknom_remontee CHECK (nom_remontee IS NOT NULL)
 );
 
 CREATE TABLE public.passage
