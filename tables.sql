@@ -8,7 +8,7 @@ drop table passage;
 CREATE TABLE type_forfait
 (
     id_type_forfait integer NOT NULL,
-    libelle_type_forfait character varying(30),
+    libelle_type_forfait character varying(30) NOT NULL,
     prix numeric(3,0),
     heure_debut time without time zone,
     heure_fin time without time zone,
@@ -32,13 +32,14 @@ CREATE TABLE public.forfait
     id_carte integer,
     date_debut date,
     CONSTRAINT pkf PRIMARY KEY (id_forfait),
-    CONSTRAINT fk1 FOREIGN KEY (id_type_forfait) REFERENCES public.type_forfait (id_type_forfait)
+    CONSTRAINT fk1 FOREIGN KEY (id_type_forfait) REFERENCES public.type_forfait (id_type_forfait),
+    CONSTRAINT fk2 FOREIGN KEY (id_carte) REFERENCES public.carte (id_carte)
 );
 
 CREATE TABLE public.type_remontee
 (
     id_type_remontee integer NOT NULL,
-    libelle_type_remontee character varying(30) COLLATE pg_catalog."default",
+    libelle_type_remontee character varying(30) NOT NULL COLLATE pg_catalog."default",
     CONSTRAINT pktr PRIMARY KEY (id_type_remontee)
 );
 
