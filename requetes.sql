@@ -23,10 +23,12 @@ WHERE tr.id_type_remontee = r.id_type_remontee
 -- 3.Les remontées de type ’télésiège’ empruntées avec le forfait n°1
 
 SELECT DISTINCT r.id_remontee, r.nom_remontee, t.libelle_type_remontee 
-FROM remontee r, type_remontee t, passage p, forfait f
+FROM remontee r, type_remontee t, passage p, forfait f,type_forfait tf
 WHERE r.id_type_remontee = t.id_type_remontee 
 	AND p.id_carte = f.id_carte 
 	AND r.id_remontee = p.id_remontee 
+	AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
+	AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin
 	AND t.libelle_type_remontee = 'télésiège' 
 	AND f.id_forfait = 1;
 
@@ -136,24 +138,6 @@ HAVING COUNT(*) <= ALL(SELECT COUNT(*) AS Nb_remontee
 
 
 -- 12. Le(s) forfait(s) ayant servi le plus de fois sur une journée
-
-SELECT f.id_forfait, t.libelle_type_forfait, COUNT(*) AS Nb_fois_utilise 
-FROM forfait f, type_forfait t, passage p 
-WHERE f.id_type_forfait = t.id_type_forfait 
-	AND f.id_carte = p.id_carte
-	AND p.heure_passage BETWEEN f.date_debut + t.heure_debut 
-	AND f.date_debut + (t.duree_forfait-1) * interval '1 day' + t.heure_fin
-GROUP BY f.id_forfait, t.libelle_type_forfait 
-HAVING COUNT(*) >= ALL(SELECT COUNT(*) AS Nb_fois_utilise 
-					   FROM forfait f, type_forfait t, passage p 
-					   WHERE f.id_type_forfait = t.id_type_forfait 
-					  	   AND f.id_carte = p.id_carte
-						   AND p.heure_passage BETWEEN f.date_debut + t.heure_debut 
-						   AND f.date_debut + (t.duree_forfait-1) * interval '1 day' + t.heure_fin
-					   GROUP BY f.id_forfait, t.libelle_type_forfait);
-
-
-
 
 SELECT f.id_forfait, t.libelle_type_forfait, COUNT(*) as Nb_fois_utlilse
 FROM passage p, forfait f, type_forfait t
