@@ -62,14 +62,16 @@ GROUP BY tf.libelle_type_forfait;
 
 -- 6 Le nombre de forfaits qui ont été utilisés sur toutes les remontées de la station
 
-SELECT COUNT(*) AS Nb_forfaits_utilises 
-FROM forfait f, passage p, remontee r, type_forfait tf 
-WHERE p.id_carte = f.id_carte
-	AND r.id_remontee = p.id_remontee
-	AND tf.id_type_forfait = f.id_type_forfait
-	AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
-	AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin;
-
+SELECT COUNT(*) 
+FROM (SELECT DISTINCT(id_forfait) FROM forfait f, passage p, type_forfait tf
+    	WHERE f.id_carte = p.id_carte
+     		AND f.id_type_forfait = tf.id_type_forfait 
+	 		AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
+	 		AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin
+    	GROUP BY id_forfait
+   	    HAVING COUNT(DISTINCT(id_remontee)) =(SELECT COUNT(id_remontee) 
+											   FROM remontee)) 
+			   AS Nb_forfaits_utilises;
 
 
 -- 7. Les cartes qui ont été les plus ré-utilisées (c’est à dire associées au plus grand nombre de forfaits)  
@@ -85,7 +87,7 @@ HAVING COUNT(*) >= ALL(SELECT COUNT(*) AS Nb_forfait
 
 -- 8. Le nombre de passages enregistrés pour chaque remontée 
 
-SELECT p.id_remontee, r.nom_remontee, COUNT(*) AS Nb_Passage 
+SELECT p.id_remontee, r.nom_remontee, COUNT(*) AS Nb_Passages 
 FROM passage p, remontee r 
 WHERE p.id_remontee = r.id_remontee 
 GROUP BY p.id_remontee, r.nom_remontee 
@@ -95,15 +97,15 @@ ORDER BY p.id_remontee ASC;
 
 --9. Pour, chaque jour, le nombre de passages enregistrés pour chaque remontée
 
-SELECT DISTINCT r.id_remontee, r.nom_remontee, DATE_TRUNC('day', f.date_debut) AS Jour, COUNT(*) AS Nb_passage 
+SELECT DISTINCT r.id_remontee, r.nom_remontee, DATE_TRUNC('day', p.heure_passage) AS Jour, COUNT(*) AS Nb_passages 
 FROM passage p, forfait f, remontee r, type_forfait tf
 WHERE p.id_carte = f.id_carte 
 	AND p.id_remontee = r.id_remontee
 	AND tf.id_type_forfait = f.id_type_forfait
 	AND p.heure_passage BETWEEN f.date_debut + tf.heure_debut 
 	AND f.date_debut + (tf.duree_forfait-1) * interval '1 day' + tf.heure_fin
-GROUP BY DATE_TRUNC('day', f.date_debut), r.id_remontee, r.nom_remontee 
-ORDER BY DATE_TRUNC('day', f.date_debut) ASC;
+GROUP BY DATE_TRUNC('day', p.heure_passage), r.id_remontee, r.nom_remontee 
+ORDER BY DATE_TRUNC('day', p.heure_passage) ASC;
 
 
 
